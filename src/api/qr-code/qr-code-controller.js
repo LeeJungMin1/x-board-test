@@ -1,5 +1,17 @@
 import * as QRService from "./qr-code-service.js";
 
+export const getAllQRView = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const result = await QRService.getAllQRViewList(page, limit);
+    res.json(result);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const findDevicesByQRData = async (req, res) => {
   try {
     const { data } = req.query;

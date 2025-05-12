@@ -1,9 +1,27 @@
 import { db } from "../../config/db.js";
 
-export const getAllDeviceUnits = async () => {
-  const sql = "SELECT * FROM device_unit ORDER BY created_at DESC";
-  const result = await db.query(sql);
-  return result.rows;
+export const getAllDeviceUnits = async (page = 1, limit = 10) => {
+  const offset = (page - 1) * limit;
+
+  const totalResult = await db.query(`SELECT COUNT(*) FROM qr_codes`);
+  const total = parseInt(totalResult.rows[0].count);
+
+  const sql = `
+    SELECT *
+    FROM device_unit
+    ORDER BY created_at DESC
+    LIMIT $1 OFFSET $2
+    `;
+
+  const result = await db.query(sql, [limit, offset]);
+
+  return {
+    data: result.rows,
+    page,
+    limit,
+    total,
+    totalPages: Math.ceil(total / limit),
+  };
 };
 
 export const getDeviceUnitById = async (unitId) => {

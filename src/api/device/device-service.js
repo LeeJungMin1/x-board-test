@@ -1,17 +1,13 @@
-import {
-  getAllDevices,
-  getDeviceDetail,
-  getAllDeviceDetails,
-} from "./device-model.js";
+import * as DeviceModel from "./device-model.js";
 
 export const listDevices = async () => {
-  return await getAllDevices();
+  return await DeviceModel.getAllDevices();
 };
 
 export const findDeviceDetail = async (deviceId) => {
-  return await getDeviceDetail(deviceId);
+  return await DeviceModel.getDeviceDetail(deviceId);
 };
 
 export const listAllDeviceDetails = async () => {
-  return await getAllDeviceDetails();
+  return await DeviceModel.getAllDeviceDetails();
 };

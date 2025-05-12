@@ -18,6 +18,6 @@ router.post("/detail", createChecklistDetail);
 router.delete("/:check_id", deleteChecklist);
 router.delete("/detail/:id", deleteChecklistDetail);
 
-router.get("/all", getAllChecklistsView); // View 조회
+router.get("/view", getAllChecklistsView); // View 조회
 
 export default router;

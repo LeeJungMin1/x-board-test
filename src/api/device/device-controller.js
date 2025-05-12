@@ -1,13 +1,8 @@
-import {
-  listDevices,
-  findDeviceDetail,
-  listAllDeviceDetails,
-} from "./device-service.js";
+import * as DeviceService from "./device-service.js";
 
 export const getDevices = async (req, res) => {
   try {
-    console.log("1");
-    const devices = await listDevices();
+    const devices = await DeviceService.listDevices();
     res.json(devices);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -16,9 +11,8 @@ export const getDevices = async (req, res) => {
 
 export const getDeviceDetail = async (req, res) => {
   try {
-    console.log("2");
     const { device_id } = req.params;
-    const device = await findDeviceDetail(device_id);
+    const device = await DeviceService.findDeviceDetail(device_id);
 
     if (!device) {
       return res.status(404).json({ message: "Device not found" });
@@ -33,7 +27,7 @@ export const getDeviceDetail = async (req, res) => {
 
 export const getAllDeviceDetails = async (req, res) => {
   try {
-    const devices = await listAllDeviceDetails();
+    const devices = await DeviceService.listAllDeviceDetails();
     return res.json(devices);
   } catch (error) {
     console.error("❌ getAllDeviceDetails 에러:", error);

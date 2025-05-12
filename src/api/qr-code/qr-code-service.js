@@ -2,6 +2,10 @@ import * as QRModel from "./qr-code-model.js";
 import QRCode from "qrcode";
 import { db } from "../../config/db.js";
 
+export const getAllQRViewList = async (page, limit) => {
+  return await QRModel.getAllQRCodesPaginated(page, limit);
+};
+
 export const createQRCodeEntry = async (data) => {
   const qrImage = await QRCode.toDataURL(data);
   await QRModel.insertQRCode(data, qrImage);
