@@ -37,6 +37,8 @@ export const getSensorChartData = async (req, res) => {
       count
     );
 
+    console.log("data =>", data);
+
     res.json({
       device_id,
       sensor_types: sensorTypes,
@@ -83,5 +85,26 @@ export const getSensorChartDataByDeviceId = async (req, res) => {
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: error.message });
+  }
+};
+
+export const getSensorDataByDeviceId = async (req, res) => {
+  const { device_id } = req.params;
+
+  try {
+    const data = await SensorService.fetchLatestSensorValuesFromRedis(
+      device_id
+    );
+
+    if (!data) {
+      return res
+        .status(404)
+        .json({ result: "실패", message: "해당 디바이스 없음" });
+    }
+
+    res.json(data);
+  } catch (err) {
+    console.error("Redis 조회 실패:", err);
+    res.status(500).json({ result: "실패", message: "서버 오류" });
   }
 };
