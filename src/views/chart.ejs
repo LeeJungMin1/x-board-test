@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sensor Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 1rem;
+        font-family: Arial, sans-serif;
+        background-color: #f8f9fa;
+      }
+
+      .chart-container {
+        width: 95%;
+        margin: auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+      }
+
+      canvas {
+        width: 100% !important;
+        height: auto !important;
+      }
+
+      @media (max-width: 600px) {
+        .chart-container {
+          padding: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chart-container">
+      <canvas id="sensorChart"></canvas>
+    </div>
+
+    <script>
+      const deviceId = "<%= device_id %>";
+      const sensorType = "<%= sensor_type %>" || null;
+      const limit = "<%= limit %>";
+
+      async function loadChart() {
+        const res = await fetch(
+          `/api/sensor-data/chart?device_id=${deviceId}&sensor_type=${sensorType}&limit=${limit}`
+        );
+        const json = await res.json();
+
+        const chartTypeMap = {
+          Line_Chart: "line",
+          Bar_Chart: "bar",
+          Default: "line",
+        };
+
+        const chartType = chartTypeMap[json.chartType] || "line";
+        const ctx = document.getElementById("sensorChart").getContext("2d");
+
+        let datasets = [];
+        let labels = [];
+
+        // ✅ 1. 다중 센서 처리
+        if (json.sensor_types && Array.isArray(json.sensor_types)) {
+          // 가장 데이터가 많은 센서를 기준으로 라벨 생성
+          const longestSensorType = json.sensor_types.reduce((a, b) => {
+            return (json.data[a]?.length || 0) > (json.data[b]?.length || 0)
+              ? a
+              : b;
+          });
+
+          labels = json.data[longestSensorType].map((d) =>
+            new Date(d.time).toLocaleTimeString()
+          );
+
+          datasets = json.sensor_types.map((type, idx) => {
+            const sensorData = json.data[type] || [];
+
+            return {
+              label: `${type} (${json.units?.[idx] || ""})`,
+              data: sensorData.map((d) => d.value),
+              borderColor: getColor(idx),
+              backgroundColor: getColor(idx, 0.2),
+              borderWidth: 2,
+              fill: false,
+            };
+          });
+        }
+
+        // ✅ 2. 단일 센서 처리
+        else if (json.sensor_type && Array.isArray(json.data)) {
+          labels = json.data.map((d) => new Date(d.time).toLocaleTimeString());
+
+          datasets = [
+            {
+              label: `${json.sensor_type} (${json.unit || ""})`,
+              data: json.data.map((d) => d.value),
+              borderColor: getColor(0),
+              backgroundColor: getColor(0, 0.2),
+              borderWidth: 2,
+              fill: false,
+            },
+          ];
+        }
+
+        // ✅ 그래프 렌더링
+        new Chart(ctx, {
+          type: chartType,
+          data: {
+            labels,
+            datasets,
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              title: {
+                display: true,
+                text: `Sensor Data for ${deviceId}`,
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+
+      // 센서별 색상 구분용 유틸
+      function getColor(index, alpha = 1) {
+        const colors = [
+          `rgba(70,130,180,${alpha})`, // steelblue
+          `rgba(255,99,132,${alpha})`, // red
+          `rgba(54,162,235,${alpha})`, // blue
+          `rgba(255,206,86,${alpha})`, // yellow
+          `rgba(75,192,192,${alpha})`, // green
+          `rgba(153,102,255,${alpha})`, // purple
+          `rgba(255,159,64,${alpha})`, // orange
+        ];
+        return colors[index % colors.length];
+      }
+
+      document.addEventListener("DOMContentLoaded", loadChart);
+    </script>
+  </body>
+</html>

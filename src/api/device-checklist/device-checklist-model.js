@@ -16,7 +16,7 @@ export const getChecklistsDetail = async (check_id) => {
   SELECT * FROM device_checklist_detail WHERE check_id = $1
   `;
   const checklistDetailResult = await db.query(sql, [check_id]);
-  const checklistDetailItems = checklistDetailResult.rows;
+  const checklistDetailItems = checklistDetailResult.rows[0];
 
   return checklistDetailItems;
 };
@@ -115,5 +115,15 @@ export const deleteChecklist = async (checkId) => {
 export const deleteChecklistDetail = async (detailId) => {
   const sql = `DELETE FROM device_checklist_detail WHERE id = $1 RETURNING *`;
   const result = await db.query(sql, [detailId]);
+  return result.rows[0];
+};
+
+export const getChartType = async (device_id) => {
+  const sql = `
+    SELECT chart_type
+    FROM device_checklist_detail
+    WHERE device_id = $1
+    `;
+  const result = await db.query(sql, [device_id]);
   return result.rows[0];
 };

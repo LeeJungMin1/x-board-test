@@ -7,7 +7,7 @@ export const getDeviceUnits = async (req, res) => {
 
     if (device_id) {
       const units = await UnitService.findDeviceUnitsByDeviceId(device_id);
-      return res.json(units);
+      return res.json({ data: units });
     }
 
     const page = parseInt(req.query.page) || 1;

@@ -27,3 +27,7 @@ export const removeChecklist = async (checkId) => {
 export const removeChecklistDetail = async (detailId) => {
   return await ChecklistModel.deleteChecklistDetail(detailId);
 };
+
+export const findChartType = async (deviceId) => {
+  return await ChecklistModel.getChartType(deviceId);
+};

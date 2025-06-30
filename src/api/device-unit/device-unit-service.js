@@ -23,3 +23,7 @@ export const removeDeviceUnit = async (unitId) => {
 export const findDeviceUnitsByDeviceId = async (deviceId) => {
   return await UnitModel.getDeviceUnitsByDeviceId(deviceId);
 };
+
+export const findDeviceUnitByTelemetryKey = async (sensorType) => {
+  return await UnitModel.getDeviceUnitBySensorType(sensorType);
+};

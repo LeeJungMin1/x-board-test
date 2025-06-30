@@ -74,3 +74,13 @@ export const getDeviceUnitsByDeviceId = async (deviceId) => {
   const result = await db.query(sql, [deviceId]);
   return result.rows;
 };
+
+export const getDeviceUnitBySensorType = async (sensorType) => {
+  const sql = `
+    SELECT unit
+    FROM device_unit
+    WHERE telemetry_key = $1
+  `;
+  const result = await db.query(sql, [sensorType]);
+  return result.rows[0];
+};

@@ -52,7 +52,8 @@ export const createQRCodeEntry = async (req, res) => {
 
 export const deleteQRCodeByData = async (req, res) => {
   try {
-    const { data } = req.body;
+    const { data } = req.params;
+
     const result = await QRService.deleteQRCodeByData(data);
     res.json({ success: true });
   } catch (error) {

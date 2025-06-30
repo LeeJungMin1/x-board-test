@@ -3,7 +3,7 @@ import * as ChecklistService from "./device-checklist-service.js";
 export const getChecklist = async (req, res) => {
   try {
     const data = await ChecklistService.findChecklist();
-    return res.json(data);
+    return res.json({ checkList: data });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
