@@ -1,0 +1,12 @@
+import { Router } from "express";
+import {
+  getMaintenanceHistory,
+  postSaveMaintenance,
+} from "./maintenance-controller.js";
+import { authenticateToken } from "../../middlewares/auth-middleware.js";
+
+const router = Router();
+router.get("/history", authenticateToken, getMaintenanceHistory);
+router.post("/", authenticateToken, postSaveMaintenance);
+
+export default router;
