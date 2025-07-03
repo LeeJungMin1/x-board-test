@@ -7,6 +7,7 @@ import sensorDataRoutes from "./api/sensor-data/sensor-data-routes.js";
 import userRoutes from "./api/user/user-routes.js";
 import authRoutes from "./api/auth/auth-routes.js";
 import maintenanceRoutes from "./api/maintenance/maintenance-routes.js";
+import pdfRoutes from "./api/pdf/pdf-routes.js";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use("/sensor-data", sensorDataRoutes);
 router.use("/users", userRoutes);
 router.use("/auth", authRoutes);
 router.use("/maintenance", maintenanceRoutes);
+router.use("/pdf", pdfRoutes);
 
 export default router;
