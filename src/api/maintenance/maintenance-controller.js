@@ -13,6 +13,24 @@ export const getMaintenanceHistory = async (req, res) => {
   }
 };
 
+export const getMaintenanceHistoryByDevice = async (req, res) => {
+  const { deviceId } = req.params;
+  const limit = parseInt(req.query.limit || "5");
+
+  try {
+    const data = await maintenanceService.fetchMaintenanceByDeviceId(
+      deviceId,
+      limit
+    );
+
+    console.log("controller result.rows =>", data);
+    res.status(200).json({ CheckDetail: data });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch maintenance data." });
+  }
+};
+
 export const postSaveMaintenance = async (req, res) => {
   try {
     const payload = req.body;

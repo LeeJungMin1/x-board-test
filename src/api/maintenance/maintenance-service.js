@@ -1,4 +1,8 @@
+import fs from "fs";
+import path from "path";
 import { db } from "../../config/db.js";
+import * as maintenanceModel from "./maintenance-model.js";
+import { generatePdfBuffer } from "../../utils/pdf-utils.js";
 
 export const getMaintenanceHistoryGrouped = async (limit) => {
   try {
@@ -73,12 +77,27 @@ export const saveMaintenanceRecords = async (sessionId, payload) => {
   try {
     await client.query("BEGIN");
 
+    // PDF 생성
+    const pdfBuffer = await generatePdfBuffer(
+      CheckDetail,
+      start_time,
+      end_time,
+      uid
+    );
+
+    const fileName = `report_${sessionId}.pdf`;
+    const savePath = path.join(process.cwd(), "pdf_file", fileName);
+    fs.writeFileSync(savePath, pdfBuffer);
+
+    // DB 저장용 상대 경로
+    const pdfPath = `/pdf_file/${fileName}`;
+
     // 1. device_maintenance 삽입
     await client.query(
       `INSERT INTO device_maintenance
         (session_id, uid, start_time, end_time, total_cnt, pdf_path, created_at)
        VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
-      [sessionId, uid, start_time, end_time, total_cnt, "none.pdf"]
+      [sessionId, uid, start_time, end_time, total_cnt, pdfPath]
     );
 
     // 2. 각 상세 항목 삽입
@@ -107,5 +126,19 @@ export const saveMaintenanceRecords = async (sessionId, payload) => {
     throw err;
   } finally {
     client.release();
+  }
+};
+
+export const fetchMaintenanceByDeviceId = async (deviceId, limit) => {
+  try {
+    const result = await maintenanceModel.getMaintenanceByDeviceId(
+      deviceId,
+      limit
+    );
+
+    console.log("service result.rows => ", result.rows);
+    return result;
+  } catch (err) {
+    throw new Error(`DB Error: ${err.message}`);
   }
 };
