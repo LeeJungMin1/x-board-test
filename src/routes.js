@@ -8,6 +8,7 @@ import userRoutes from "./api/user/user-routes.js";
 import authRoutes from "./api/auth/auth-routes.js";
 import maintenanceRoutes from "./api/maintenance/maintenance-routes.js";
 import pdfRoutes from "./api/pdf/pdf-routes.js";
+import deviceManagementRoutes from "./api/device-management/device-management-routes.js";
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use("/users", userRoutes);
 router.use("/auth", authRoutes);
 router.use("/maintenance", maintenanceRoutes);
 router.use("/pdf", pdfRoutes);
+router.use("/admin-device", deviceManagementRoutes);
 
 export default router;
