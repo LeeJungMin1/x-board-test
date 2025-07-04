@@ -4,8 +4,6 @@ import { API_SERVER_PORT } from "../src/config/config.js";
 
 const PORT = API_SERVER_PORT || 3000;
 
-console.log("API_SERVER_PORT => ", PORT);
-
 const startServer = async () => {
   // await connectListener();
 

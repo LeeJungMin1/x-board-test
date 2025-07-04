@@ -20,3 +20,9 @@ export const REDIS_URL = process.env.REDIS_URL;
 
 // JWT 토큰 설정
 export const JWT_SECRET = process.env.JWT_SECRET;
+
+// 날씨 API Key 설정
+export const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
+
+// Gemini API Key 설정
+export const GEN_AI_API_KEY = process.env.GEN_AI_API_KEY;
