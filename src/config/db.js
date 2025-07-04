@@ -1,26 +1,30 @@
 import pkg from "pg";
-import dotenv from "dotenv";
+import {
+  DB_USER,
+  DB_HOST,
+  DB_PORT,
+  DB_NAME,
+  DB_PASSWORD,
+} from "../config/config.js";
 
 const { Pool, Client } = pkg;
 
-dotenv.config();
-
 export const db = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  user: DB_USER,
+  host: DB_HOST,
+  database: DB_NAME,
+  password: DB_PASSWORD,
+  port: DB_PORT,
   max: 10,
   idleTimeoutMillis: 30000,
 });
 
 export const listenClient = new Client({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
+  user: DB_USER,
+  host: DB_HOST,
+  database: DB_NAME,
+  password: DB_PASSWORD,
+  port: DB_PORT,
 });
 
 // export const connectListener = async () => {
