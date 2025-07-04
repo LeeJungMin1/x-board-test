@@ -9,6 +9,7 @@ import authRoutes from "./api/auth/auth-routes.js";
 import maintenanceRoutes from "./api/maintenance/maintenance-routes.js";
 import pdfRoutes from "./api/pdf/pdf-routes.js";
 import deviceManagementRoutes from "./api/device-management/device-management-routes.js";
+import weatherRoutes from "./api/weather/weather-routes.js";
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use("/auth", authRoutes);
 router.use("/maintenance", maintenanceRoutes);
 router.use("/pdf", pdfRoutes);
 router.use("/admin-device", deviceManagementRoutes);
+router.use("/weather", weatherRoutes);
 
 export default router;
