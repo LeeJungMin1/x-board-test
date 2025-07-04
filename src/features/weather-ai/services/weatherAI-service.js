@@ -1,5 +1,8 @@
 import generateAIContent from "../../gemini-ai/services/gemini-client.js";
-import { getShortTermForecastAPI } from "../services/weatherAPI-client.js";
+import {
+  getShortTermForecastAPI,
+  getSpecialWeatherReportAPI,
+} from "../services/weatherAPI-client.js";
 import {
   saveWeatherAIContent,
   loadStructureContent,
@@ -36,5 +39,35 @@ export const CreateWeatherAIContent = async () => {
     return aiWeatherCast;
   } catch (error) {
     throw new Error(`AI 기상 캐스터 제작에 실패했습니다 : ${error.message}`);
+  }
+};
+
+export const CreateSpecialWeatherAlertAIContent = async () => {
+  try {
+    const type = "specialWeather";
+    const specialWeatherData = await getSpecialWeatherReportAPI();
+
+    if (specialWeatherData.data) {
+      return "기상 특보가 없으므로 AI 캐스터가 작동하지 않습니다.";
+    }
+
+    if (specialWeatherData.duplicate) {
+      return "중복된 기상 특보이므로 AI 캐스터가 작동하지 않습니다.";
+    }
+
+    const geminiPromptData = await loadStructureContent(type);
+
+    const aiSpecialWeatherCast =
+      await generateAIContent(`${geminiPromptData.structure}\n
+                                                          ${geminiPromptData.content}\n
+                                                            \n${specialWeatherData}`);
+
+    await saveWeatherAIContent(aiSpecialWeatherCast, type);
+
+    return aiSpecialWeatherCast;
+  } catch (error) {
+    throw new Error(
+      `AI 기상 특보 캐스터 제작에 실패했습니다 : ${error.message}`
+    );
   }
 };
