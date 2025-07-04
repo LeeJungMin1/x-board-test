@@ -1,9 +1,5 @@
-import dotenv from "dotenv";
+import { JWT_SECRET } from "../config/config.js";
 import jwt from "jsonwebtoken";
-
-dotenv.config();
-
-const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
  * 사용자 ID로 Access Token과 Refresh Token을 생성합니다.

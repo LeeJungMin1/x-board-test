@@ -1,8 +1,6 @@
-import dotenv from "dotenv";
 import * as authService from "./auth-service.js";
+import { NODE_ENV } from "../../config/config.js";
 import { generateTokens, verifyToken } from "../../utils/token-utils.js";
-
-dotenv.config();
 
 export const postLogin = async (req, res) => {
   const { uid } = req.body;
@@ -18,7 +16,7 @@ export const postLogin = async (req, res) => {
   const isWeb = req.headers["user-agent"]?.includes("Mozilla");
 
   if (isWeb) {
-    const isProduction = process.env.NODE_ENV === "production";
+    const isProduction = NODE_ENV === "production";
     // 🌐 웹: Refresh Token을 HttpOnly 쿠키로 저장
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
