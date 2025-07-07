@@ -47,7 +47,7 @@ export const CreateWeatherAIContent = async () => {
 export const CreateSpecialWeatherAlertAIContent = async () => {
   try {
     const type = "specialWeather";
-    const firebaseTitle = "기상 특보 알림!";
+    const title = "기상 특보 알림!";
     const specialWeatherData = await getSpecialWeatherReportAPI();
 
     if (specialWeatherData.data) {
@@ -67,11 +67,7 @@ export const CreateSpecialWeatherAlertAIContent = async () => {
 
     await saveWeatherAIContent(aiSpecialWeatherCast, type);
 
-    sendSocketAlert(
-      EVENT_TYPES.SPECIAL_WEATHER,
-      aiSpecialWeatherCast,
-      firebaseTitle
-    );
+    sendSocketAlert(EVENT_TYPES.SPECIAL_WEATHER, aiSpecialWeatherCast, title);
 
     return aiSpecialWeatherCast;
   } catch (error) {
