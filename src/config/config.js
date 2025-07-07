@@ -26,3 +26,17 @@ export const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 
 // Gemini API Key 설정
 export const GEN_AI_API_KEY = process.env.GEN_AI_API_KEY;
+
+// Firebase Key 설정
+export const FIREBASE_TYPE = process.env.FIREBASE_TYPE;
+export const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
+export const FIREBASE_PRIVATE_KEY_ID = process.env.FIREBASE_PRIVATE_KEY_ID;
+export const FIREBASE_PRIVATE_KEY = process.env.FIREBASE_PRIVATE_KEY;
+export const FIREBASE_CLIENT_EMAIL = process.env.FIREBASE_CLIENT_EMAIL;
+export const FIREBASE_CLIENT_ID = process.env.FIREBASE_CLIENT_ID;
+export const FIREBASE_AUTH_URI = process.env.FIREBASE_AUTH_URI;
+export const FIREBASE_TOKEN_URI = process.env.FIREBASE_TOKEN_URI;
+export const FIREBASE_AUTH_PROVIDER_CERT_URL =
+  process.env.FIREBASE_AUTH_PROVIDER_CERT_URL;
+export const FIREBASE_CLIENT_CERT_URL = process.env.FIREBASE_CLIENT_CERT_URL;
+export const FIREBASE_UNIVERSE_DOMAIN = process.env.FIREBASE_UNIVERSE_DOMAIN;

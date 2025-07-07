@@ -7,6 +7,8 @@ import {
   saveWeatherAIContent,
   loadStructureContent,
 } from "../models/weatherAI-model.js";
+import { sendSocketAlert } from "../../../websocket/socket-emitter.js";
+import { EVENT_TYPES } from "../../../websocket/event-types.js";
 
 export const CreateWeatherAIContent = async () => {
   try {
@@ -45,6 +47,7 @@ export const CreateWeatherAIContent = async () => {
 export const CreateSpecialWeatherAlertAIContent = async () => {
   try {
     const type = "specialWeather";
+    const firebaseTitle = "기상 특보 알림!";
     const specialWeatherData = await getSpecialWeatherReportAPI();
 
     if (specialWeatherData.data) {
@@ -63,6 +66,12 @@ export const CreateSpecialWeatherAlertAIContent = async () => {
                                                             \n${specialWeatherData}`);
 
     await saveWeatherAIContent(aiSpecialWeatherCast, type);
+
+    sendSocketAlert(
+      EVENT_TYPES.SPECIAL_WEATHER,
+      aiSpecialWeatherCast,
+      firebaseTitle
+    );
 
     return aiSpecialWeatherCast;
   } catch (error) {
