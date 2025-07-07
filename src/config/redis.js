@@ -1,10 +1,8 @@
 import { createClient } from "redis";
-import dotenv from "dotenv";
-
-dotenv.config();
+import { REDIS_URL } from "../config/config.js";
 
 const redisClient = createClient({
-  url: process.env.REDIS, // .env에서 설정해도 됨
+  url: REDIS_URL, // .env에서 설정해도 됨
 });
 
 redisClient.on("error", (err) => console.error("❌ Redis Error", err));

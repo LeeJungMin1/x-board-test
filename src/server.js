@@ -1,13 +1,20 @@
+import http from "http";
 import app from "./app.js";
-// import { connectListener } from "./config/db.js";
+import { API_SERVER_PORT } from "../src/config/config.js";
+import { initSocket } from "./websocket/index.js";
 
-const PORT = process.env.PORT || 3000;
+const PORT = API_SERVER_PORT || 3000;
 
 const startServer = async () => {
-  // await connectListener();
+  const server = http.createServer(app);
 
-  app.listen(PORT, () => {
+  initSocket(server);
+
+  server.listen(PORT, () => {
     console.log(`🚀 Server running at http://localhost:${PORT}`);
+    console.log(
+      `📡 WebSocket running at ws://localhost:${PORT}/xboard-alert-socket/`
+    );
   });
 };
 

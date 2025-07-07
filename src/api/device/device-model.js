@@ -50,3 +50,16 @@ export const getAllDeviceDetails = async () => {
   const result = await db.query(sql);
   return result.rows;
 };
+
+export const getDeviceNameById = async (deviceId) => {
+  const sql = `
+    SELECT
+    device_name
+    FROM
+      device
+    WHERE device_id=$1
+  `;
+
+  const result = await db.query(sql, [deviceId]);
+  return result.rows[0];
+};
