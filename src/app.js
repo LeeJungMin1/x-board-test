@@ -5,6 +5,9 @@ import { fileURLToPath } from "url";
 import routes from "./routes.js";
 import viewRoute from "./view-routes.js";
 
+// 날씨 AI 생성 스케쥴러 자동 실행
+import "./features/weather-ai/weather-ai-scheduler.js";
+
 const app = express();
 
 app.use(cors());
