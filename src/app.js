@@ -5,8 +5,9 @@ import { fileURLToPath } from "url";
 import routes from "./routes.js";
 import viewRoute from "./view-routes.js";
 
-// 날씨 AI 생성 스케쥴러 자동 실행
-import "./features/weather-ai/weather-ai-scheduler.js";
+// 스케쥴러 자동 실행
+import { runWeatherAISchedulers } from "./features/weather-ai/weather-ai-scheduler.js";
+import { runReplaceAlarmScheduler } from "./features/replace-alarm/replace-alarm-scheduler.js";
 
 const app = express();
 
@@ -24,5 +25,8 @@ app.set("view engine", "ejs"); // 🔧 EJS 엔진 등록
 app.use("/api", routes);
 
 app.use("/view", viewRoute);
+
+runWeatherAISchedulers();
+runReplaceAlarmScheduler();
 
 export default app;
