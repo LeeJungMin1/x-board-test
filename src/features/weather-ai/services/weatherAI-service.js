@@ -67,7 +67,11 @@ export const CreateSpecialWeatherAlertAIContent = async () => {
 
     await saveWeatherAIContent(aiSpecialWeatherCast, type);
 
-    sendSocketAlert(EVENT_TYPES.SPECIAL_WEATHER, aiSpecialWeatherCast, title);
+    await sendSocketAlert({
+      type: EVENT_TYPES.SPECIAL_WEATHER,
+      data: aiSpecialWeatherCast,
+      title: title,
+    });
 
     return aiSpecialWeatherCast;
   } catch (error) {
