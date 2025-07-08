@@ -21,6 +21,7 @@
     "firebase-admin": "^13.4.0",
     "fontkit": "^2.0.4",
     "jsonwebtoken": "^9.0.2",
+    "node-schedule": "^2.1.1",
     "pdf-lib": "^1.17.1",
     "pg": "^8.15.6",
     "qrcode": "^1.5.4",

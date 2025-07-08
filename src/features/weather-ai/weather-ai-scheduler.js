@@ -4,8 +4,9 @@ import {
 } from "../weather-ai/services/weatherAI-service.js";
 
 let isRunning = false;
+let isRunning2 = false;
 
-const runWeatherAIService = async () => {
+export const runWeatherAIService = async () => {
   if (isRunning) {
     console.log(
       "이전 날씨 AI 작업이 완료되지 않아서, 현재 실행을 건너뛰고 있습니다."
@@ -26,9 +27,7 @@ const runWeatherAIService = async () => {
   }
 };
 
-let isRunning2 = false;
-
-const runSpecialWeatherAIService = async () => {
+export const runSpecialWeatherAIService = async () => {
   if (isRunning2) {
     console.log(
       "이전 특보 날씨 AI 작업이 완료되지 않아서, 현재 실행을 건너띄고 있습니다."
@@ -52,15 +51,13 @@ const runSpecialWeatherAIService = async () => {
   }
 };
 
-// 첫 실행
-runWeatherAIService();
-runSpecialWeatherAIService();
+export const runWeatherAISchedulers = () => {
+  runWeatherAIService();
+  runSpecialWeatherAIService();
 
-// 3시간마다 실행
-const interval1 = 3 * 60 * 60 * 1000; // 3시간 (밀리초 단위)
-const interval2 = 10 * 60 * 1000; // 10분 (밀리초 단위)
+  const interval1 = 3 * 60 * 60 * 1000; // 3시간 (밀리초 단위)
+  const interval2 = 10 * 60 * 1000; // 10분 (밀리초 단위)
 
-setInterval(runWeatherAIService, interval1);
-setInterval(runSpecialWeatherAIService, interval2);
-
-export default runWeatherAIService;
+  setInterval(runWeatherAIService, interval1);
+  setInterval(runSpecialWeatherAIService, interval2);
+};
