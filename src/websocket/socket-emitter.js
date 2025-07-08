@@ -1,19 +1,21 @@
 import { getIO } from "./index.js";
 import { sendFirebaseNotification } from "../notification/firebase-sender.js";
 
-export const sendSocketAlert = async (eventType, payload, firebaseTitle) => {
+export const sendSocketAlert = async ({ type, data, title }) => {
   try {
     const io = getIO();
-    io.emit(eventType, payload);
+    io.emit(type, {
+      title,
+      data,
+      type,
+    });
 
-    if (firebaseTitle) {
-      await sendFirebaseNotification({
-        title: firebaseTitle,
-        message: payload,
-        topic: eventType,
-      });
-    }
+    await sendFirebaseNotification({
+      title,
+      message: data,
+      topic: type,
+    });
   } catch (err) {
-    console.error(`❌ 소켓 알림 실패 [${eventType}]`, err.message);
+    console.error(`❌ 소켓 알림 실패 [${type}]`, err.message);
   }
 };

@@ -43,7 +43,7 @@ export const getShortTermForecastAPI = async () => {
 };
 
 export const getSpecialWeatherReportAPI = async (
-  areaCode = "L1051700",
+  areaCode = "L1051700", //영암
   service = "production"
 ) => {
   const BASE_URL = "http://apis.data.go.kr/1360000/WthrWrnInfoService/getPwnCd";
@@ -60,12 +60,19 @@ export const getSpecialWeatherReportAPI = async (
   };
 
   try {
-    const response = await axios.get(BASE_URL, { params });
+    const response = await axios.get(BASE_URL, {
+      params,
+      headers: {
+        Accept: "application/json",
+      },
+    });
+    console.log("response.data => ", response.data);
     const resultMsg = response.data.response.header.resultMsg;
     let rawData = "NO_DATA";
 
     if (resultMsg === "NORMAL_SERVICE") {
       rawData = response.data.response.body.items.item;
+
       const processedData = processSpecialWeatherData(rawData);
 
       if (

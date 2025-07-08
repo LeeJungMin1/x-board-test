@@ -1,4 +1,5 @@
 import { db } from "../../config/db.js";
+import { findUserByUid } from "./user-model.js";
 
 export const generateUniqueUid = async () => {
   let uid;
@@ -6,8 +7,8 @@ export const generateUniqueUid = async () => {
 
   while (isDuplicate) {
     uid = String(Math.floor(100000 + Math.random() * 900000)); // 6자리 랜덤
-    const result = await db.query("SELECT 1 FROM users WHERE uid = $1", [uid]);
-    isDuplicate = result.rowCount > 0;
+    const rowCount = await findUserByUid(uid);
+    isDuplicate = rowCount > 0;
   }
 
   return uid;
