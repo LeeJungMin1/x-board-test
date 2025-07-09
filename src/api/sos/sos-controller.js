@@ -1,20 +1,25 @@
 import { sendSocketAlert } from "../../websocket/socket-emitter.js";
 import { EVENT_TYPES } from "../../websocket/event-types.js";
 import { findUserByUid } from "../user/user-model.js";
+import { handleError } from "../../utils/common-utils/error-handler.js";
 
 export const postSosNotification = async (req, res) => {
   try {
     const { sos_uid } = req.body;
 
     if (!sos_uid) {
-      return res.status(400).json({ error: "sos_uid 값은 필수 입니다." });
+      return res.status(400).json({
+        errorCode: "SOS_UID_REQUIRED",
+        message: "sos_uid 값은 필수 입니다.",
+      });
     }
 
     const userExists = await findUserByUid(sos_uid);
     if (!userExists) {
-      return res
-        .status(404)
-        .json({ error: "존재하지 않는 UID(sos_uid)입니다." });
+      return res.status(404).json({
+        errorCode: "SOS_UID_NOT_FOUND",
+        message: "존재하지 않는 UID(sos_uid)입니다.",
+      });
     }
 
     const now = new Date();
@@ -41,6 +46,6 @@ export const postSosNotification = async (req, res) => {
 
     res.status(200).json({ message: "SOS 알림이 성공적으로 전송되었습니다." });
   } catch (err) {
-    res.status(500).json({ error: "UID 발급 실패" });
+    return handleError(res, err, 500, "SOS_NOTIFICATION_FAILED");
   }
 };

@@ -1,11 +1,12 @@
 import * as DeviceService from "./device-service.js";
+import { handleError } from "../../utils/common-utils/error-handler.js";
 
 export const getDevices = async (req, res) => {
   try {
     const devices = await DeviceService.listDevices();
-    res.json({ deviceList: devices });
+    return res.json({ deviceList: devices });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return handleError(res, error, 500, "DEVICE_LIST_FAILED");
   }
 };
 
@@ -15,13 +16,15 @@ export const getDeviceDetail = async (req, res) => {
     const device = await DeviceService.findDeviceDetail(device_id);
 
     if (!device) {
-      return res.status(404).json({ message: "Device not found" });
+      return res.status(404).json({
+        errorCode: "DEVICE_NOT_FOUND",
+        message: "Device not found",
+      });
     }
 
     return res.json(device);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: error.message });
+    return handleError(res, error, 500, "DEVICE_DETAIL_FAILED");
   }
 };
 
@@ -30,7 +33,6 @@ export const getAllDeviceDetails = async (req, res) => {
     const devices = await DeviceService.listAllDeviceDetails();
     return res.json({ deviceDetailList: devices });
   } catch (error) {
-    console.error("❌ getAllDeviceDetails 에러:", error);
-    return res.status(500).json({ error: error.message });
+    return handleError(res, error, 500, "DEVICE_DETAIL_LIST_FAILED");
   }
 };
