@@ -3,10 +3,10 @@ import path from "path";
 import { db } from "../../config/db.js";
 import * as maintenanceModel from "./maintenance-model.js";
 import { generatePdfBuffer } from "../../utils/pdf-utils.js";
+import { AppError } from "../../utils/common-utils/error-handler.js";
 
 export const getMaintenanceHistoryGrouped = async (limit) => {
   try {
-    // 1. 최근 세션 가져오기
     const sessionRes = await db.query(
       `SELECT session_id
        FROM device_maintenance
@@ -21,7 +21,6 @@ export const getMaintenanceHistoryGrouped = async (limit) => {
       return [];
     }
 
-    // 2. session_id에 해당하는 메타 + 상세 데이터 가져오기
     const placeholders = sessionIds.map((_, i) => `$${i + 1}`).join(",");
 
     const metaRes = await db.query(
@@ -66,7 +65,11 @@ export const getMaintenanceHistoryGrouped = async (limit) => {
 
     return grouped;
   } catch (err) {
-    throw new Error(`Failed to load maintenance history: ${err.message}`);
+    throw new AppError(
+      `getMaintenanceHistoryGrouped 실패: ${err.message}`,
+      500,
+      "GET_MAINTENANCE_HISTORY_GROUPED_FAILED"
+    );
   }
 };
 
@@ -77,7 +80,6 @@ export const saveMaintenanceRecords = async (sessionId, payload) => {
   try {
     await client.query("BEGIN");
 
-    // PDF 생성
     const pdfBuffer = await generatePdfBuffer(
       CheckDetail,
       start_time,
@@ -88,11 +90,8 @@ export const saveMaintenanceRecords = async (sessionId, payload) => {
     const fileName = `report_${sessionId}.pdf`;
     const savePath = path.join(process.cwd(), "pdf_file", fileName);
     fs.writeFileSync(savePath, pdfBuffer);
-
-    // DB 저장용 상대 경로
     const pdfPath = `/pdf_file/${fileName}`;
 
-    // 1. device_maintenance 삽입
     await client.query(
       `INSERT INTO device_maintenance
         (session_id, uid, start_time, end_time, total_cnt, pdf_path, created_at)
@@ -100,7 +99,6 @@ export const saveMaintenanceRecords = async (sessionId, payload) => {
       [sessionId, uid, start_time, end_time, total_cnt, pdfPath]
     );
 
-    // 2. 각 상세 항목 삽입
     const detailInsertQuery = `
       INSERT INTO device_maintenance_detail
         (session_id, check_id, device_id, chart_type, memo, time, value)
@@ -123,7 +121,11 @@ export const saveMaintenanceRecords = async (sessionId, payload) => {
     await client.query("COMMIT");
   } catch (err) {
     await client.query("ROLLBACK");
-    throw err;
+    throw new AppError(
+      `saveMaintenanceRecords 실패: ${err.message}`,
+      500,
+      "SAVE_MAINTENANCE_RECORDS_FAILED"
+    );
   } finally {
     client.release();
   }
@@ -136,9 +138,12 @@ export const fetchMaintenanceByDeviceId = async (deviceId, limit) => {
       limit
     );
 
-    console.log("service result.rows => ", result.rows);
     return result;
   } catch (err) {
-    throw new Error(`DB Error: ${err.message}`);
+    throw new AppError(
+      `fetchMaintenanceByDeviceId 실패: ${err.message}`,
+      500,
+      "FETCH_MAINTENANCE_BY_DEVICE_ID_FAILED"
+    );
   }
 };
