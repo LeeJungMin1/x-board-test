@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import routes from "./routes.js";
 import viewRoute from "./view-routes.js";
+import { handleError } from "./utils/common-utils/error-handler.js";
 
 // 스케쥴러 자동 실행
 import { runWeatherAISchedulers } from "./features/weather-ai/weather-ai-scheduler.js";
@@ -25,6 +26,10 @@ app.set("view engine", "ejs"); // 🔧 EJS 엔진 등록
 app.use("/api", routes);
 
 app.use("/view", viewRoute);
+
+app.use((err, req, res, next) => {
+  handleError(res, err);
+});
 
 runWeatherAISchedulers();
 runReplaceAlarmScheduler();

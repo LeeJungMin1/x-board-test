@@ -17,10 +17,15 @@ export const handleError = (
 ) => {
   const message = error.message || "Internal Server Error";
 
-  logger.error(`${errorCode}: ${message}`);
-
-  return res.status(statusCode).json({
-    errorCode,
-    message,
+  logger.error(`${errorCode}: ${message}`, {
+    stack: error.stack,
+    ...(error.meta && { meta: error.meta }),
   });
+
+  if (res) {
+    return res.status(statusCode).json({
+      errorCode,
+      message,
+    });
+  }
 };
