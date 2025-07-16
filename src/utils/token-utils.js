@@ -1,5 +1,6 @@
 import { JWT_SECRET } from "../config/config.js";
 import jwt from "jsonwebtoken";
+import { AppError } from "./common-utils/error-handler.js";
 
 /**
  * 사용자 ID로 Access Token과 Refresh Token을 생성합니다.
@@ -24,5 +25,14 @@ export const generateTokens = (userId, is_admin) => {
  * @throws {Error} 토큰이 유효하지 않으면 예외 발생
  */
 export const verifyToken = (token) => {
-  return jwt.verify(token, JWT_SECRET);
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch (err) {
+    throw new AppError(
+      "유효하지 않은 refresh token 입니다.",
+      403,
+      "INVALID_REFRESH_TOKEN",
+      { jwtError: err.message }
+    );
+  }
 };
