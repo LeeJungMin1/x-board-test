@@ -1,4 +1,5 @@
 import { db } from "../../../config/db.js";
+import { AppError } from "../../../utils/common-utils/error-handler.js";
 
 export const getAllDeviceAlarmSchedules = async () => {
   const query = `
@@ -13,7 +14,11 @@ export const getAllDeviceAlarmSchedules = async () => {
     const { rows } = await db.query(query);
     return rows;
   } catch (error) {
-    console.error("알림 데이터 조회 실패:", error);
-    return [];
+    throw new AppError(
+      "장비 알람 데이터 조회 실패",
+      500,
+      "ALARM_DB_QUERY_FAILED",
+      { dbMessage: error.message }
+    );
   }
 };

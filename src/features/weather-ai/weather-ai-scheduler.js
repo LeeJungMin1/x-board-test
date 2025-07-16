@@ -2,14 +2,19 @@ import {
   CreateWeatherAIContent,
   CreateSpecialWeatherAlertAIContent,
 } from "../weather-ai/services/weatherAI-service.js";
+import logger from "../../utils/common-utils/logger.js";
+import {
+  handleError,
+  AppError,
+} from "../../utils/common-utils/error-handler.js";
 
 let isRunning = false;
 let isRunning2 = false;
 
 export const runWeatherAIService = async () => {
   if (isRunning) {
-    console.log(
-      "이전 날씨 AI 작업이 완료되지 않아서, 현재 실행을 건너뛰고 있습니다."
+    logger.warn(
+      "🔁  이전 날씨 AI 작업이 완료되지 않아서, 현재 실행을 건너뛰고 있습니다."
     );
     return;
   }
@@ -17,11 +22,16 @@ export const runWeatherAIService = async () => {
   isRunning = true;
 
   try {
-    console.log("Weather AI Content 생성 시작");
+    logger.info("🌤️  Weather AI Content 생성 시작");
     const aiContent = await CreateWeatherAIContent();
-    console.log("Generated AI Weather Content:", aiContent);
+    logger.info(` ✅  생성된 AI Weather 콘텐츠: ${aiContent}`);
   } catch (error) {
-    console.error("Weather AI Scheduler 오류가 발생 했습니다 :", error.message);
+    const err = new AppError(
+      `Weather AI Scheduler 실패: ${error.message}`,
+      500,
+      "WEATHER_AI_SCHEDULER_FAILED"
+    );
+    handleError(null, err); // res 없이 로그만 기록
   } finally {
     isRunning = false;
   }
@@ -29,8 +39,8 @@ export const runWeatherAIService = async () => {
 
 export const runSpecialWeatherAIService = async () => {
   if (isRunning2) {
-    console.log(
-      "이전 특보 날씨 AI 작업이 완료되지 않아서, 현재 실행을 건너띄고 있습니다."
+    logger.warn(
+      "🔁  이전 특보 날씨 AI 작업이 완료되지 않아서, 현재 실행을 건너띄고 있습니다."
     );
     return;
   }
@@ -38,14 +48,16 @@ export const runSpecialWeatherAIService = async () => {
   isRunning2 = true;
 
   try {
-    console.log("Special Weather AI Content 생성 시작");
+    logger.info("🌤️  Special Weather AI Content 생성 시작");
     const aiContent = await CreateSpecialWeatherAlertAIContent();
-    console.log("Generated AI Special Weather Content:", aiContent);
+    logger.info(`✅  생성된 AI Special Weather 콘텐츠: ${aiContent}`);
   } catch (error) {
-    console.error(
-      "Special Weather AI Scheduler 오류가 발생했습니다 :",
-      error.message
+    const err = new AppError(
+      `Special Weather AI Scheduler 실패: ${error.message}`,
+      500,
+      "SPECIAL_WEATHER_AI_SCHEDULER_FAILED"
     );
+    handleError(null, err); // res 없이 로그만 기록
   } finally {
     isRunning2 = false;
   }

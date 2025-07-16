@@ -1,84 +1,65 @@
 import * as ChecklistService from "./device-checklist-service.js";
+import { AppError } from "../../utils/common-utils/error-handler.js";
 
 export const getChecklist = async (req, res) => {
-  try {
-    const data = await ChecklistService.findChecklist();
-    return res.json({ checkList: data });
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+  const data = await ChecklistService.findChecklist();
+  return res.json({ checkList: data });
 };
 
 export const getChecklistDetail = async (req, res) => {
-  try {
-    const { check_id } = req.params;
-    const data = await ChecklistService.findChecklistDetail(check_id);
-    return res.json(data);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+  const { check_id } = req.params;
+  const data = await ChecklistService.findChecklistDetail(check_id);
+  return res.json(data);
 };
 
 export const getAllChecklistsView = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const result = await ChecklistService.findAllChecklistsWithDetails(
-      page,
-      limit
-    );
-    return res.json(result);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const result = await ChecklistService.findAllChecklistsWithDetails(
+    page,
+    limit
+  );
+  return res.json(result);
 };
 
 export const createChecklist = async (req, res) => {
-  try {
-    const result = await ChecklistService.addChecklist(req.body);
-    return res.status(201).json(result);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+  const result = await ChecklistService.addChecklist(req.body);
+  return res.status(201).json(result);
 };
 
 export const createChecklistDetail = async (req, res) => {
-  try {
-    const result = await ChecklistService.addChecklistDetail(req.body);
-    return res.status(201).json(result);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
-  }
+  const result = await ChecklistService.addChecklistDetail(req.body);
+  return res.status(201).json(result);
 };
 
 export const deleteChecklist = async (req, res) => {
-  try {
-    const { check_id } = req.params;
-    const deleted = await ChecklistService.removeChecklist(check_id);
+  const { check_id } = req.params;
+  const deleted = await ChecklistService.removeChecklist(check_id);
 
-    if (!deleted) {
-      return res.status(404).json({ message: "check_id가 존재하지 않습니다." });
-    }
-
-    return res.json(deleted);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
+  if (!deleted) {
+    throw new AppError(
+      "check_id가 존재하지 않습니다.",
+      404,
+      "CHECKLIST_NOT_FOUND",
+      { check_id }
+    );
   }
+
+  return res.json(deleted);
 };
 
 export const deleteChecklistDetail = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const deleted = await ChecklistService.removeChecklistDetail(id);
+  const { id } = req.params;
+  const deleted = await ChecklistService.removeChecklistDetail(id);
 
-    if (!deleted) {
-      return res
-        .status(404)
-        .json({ message: "detail_id가 존재하지 않습니다." });
-    }
-
-    return res.json(deleted);
-  } catch (error) {
-    return res.status(500).json({ error: error.message });
+  if (!deleted) {
+    throw new AppError(
+      "detail_id가 존재하지 않습니다.",
+      404,
+      "CHECKLIST_DETAIL_NOT_FOUND",
+      { id }
+    );
   }
+
+  return res.json(deleted);
 };

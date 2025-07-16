@@ -1,36 +1,28 @@
 import * as DeviceService from "./device-service.js";
+import { AppError } from "../../utils/common-utils/error-handler.js";
 
 export const getDevices = async (req, res) => {
-  try {
-    const devices = await DeviceService.listDevices();
-    res.json({ deviceList: devices });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  const devices = await DeviceService.listDevices();
+  return res.json({ deviceList: devices });
 };
 
 export const getDeviceDetail = async (req, res) => {
-  try {
-    const { device_id } = req.params;
-    const device = await DeviceService.findDeviceDetail(device_id);
+  const { device_id } = req.params;
+  const device = await DeviceService.findDeviceDetail(device_id);
 
-    if (!device) {
-      return res.status(404).json({ message: "Device not found" });
-    }
-
-    return res.json(device);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: error.message });
+  if (!device) {
+    throw new AppError(
+      "디바이스를 찾을 수 없습니다.",
+      404,
+      "DEVICE_NOT_FOUND",
+      { device_id }
+    );
   }
+
+  return res.json(device);
 };
 
 export const getAllDeviceDetails = async (req, res) => {
-  try {
-    const devices = await DeviceService.listAllDeviceDetails();
-    return res.json({ deviceDetailList: devices });
-  } catch (error) {
-    console.error("❌ getAllDeviceDetails 에러:", error);
-    return res.status(500).json({ error: error.message });
-  }
+  const devices = await DeviceService.listAllDeviceDetails();
+  return res.json({ deviceDetailList: devices });
 };

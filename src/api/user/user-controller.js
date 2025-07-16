@@ -1,28 +1,28 @@
 import * as userService from "./user-service.js";
+import { AppError } from "../../utils/common-utils/error-handler.js";
 
 export const getGenerateUid = async (req, res) => {
-  try {
-    const uid = await userService.generateUniqueUid(); // 예: 중복 체크 포함
-    res.json({ uid });
-  } catch (err) {
-    res.status(500).json({ error: "UID 발급 실패" });
-  }
+  const uid = await userService.generateUniqueUid(); // 예: 중복 체크 포함
+  res.json({ uid });
 };
 
 export const getUserList = async (req, res) => {
   const users = await userService.fetchAllUsers();
-  res.json({ uidList: users });
+  return res.json({ uidList: users });
 };
 
 export const postsyncUsers = async (req, res) => {
   const { uidList } = req.body;
+
   if (!Array.isArray(uidList)) {
-    return res.status(400).json({ error: "uidList는 배열이어야 합니다." });
+    throw new AppError("uidList는 배열이어야 합니다.", 400, "INVALID_INPUT", {
+      uidList,
+    });
   }
 
   const { addedUsers, deletedUsers } = await userService.syncUserList(uidList);
 
-  res.json({
+  return res.json({
     message: "동기화 성공",
     addedUsers,
     deletedUsers,

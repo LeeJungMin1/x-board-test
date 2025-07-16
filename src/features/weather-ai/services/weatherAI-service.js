@@ -10,6 +10,8 @@ import {
 import { sendSocketAlert } from "../../../websocket/socket-emitter.js";
 import { EVENT_TYPES } from "../../../websocket/event-types.js";
 
+import { AppError } from "../../../utils/common-utils/error-handler.js";
+
 export const CreateWeatherAIContent = async () => {
   try {
     const type = "shortTermWeather";
@@ -40,7 +42,11 @@ export const CreateWeatherAIContent = async () => {
 
     return aiWeatherCast;
   } catch (error) {
-    throw new Error(`AI 기상 캐스터 제작에 실패했습니다 : ${error.message}`);
+    throw new AppError(
+      `AI 기상 캐스터 제작 실패: ${error.message}`,
+      500,
+      "CREATE_WEATHER_AI_FAILED"
+    );
   }
 };
 
@@ -75,8 +81,10 @@ export const CreateSpecialWeatherAlertAIContent = async () => {
 
     return aiSpecialWeatherCast;
   } catch (error) {
-    throw new Error(
-      `AI 기상 특보 캐스터 제작에 실패했습니다 : ${error.message}`
+    throw new AppError(
+      `AI 기상 특보 캐스터 제작 실패: ${error.message}`,
+      500,
+      "CREATE_SPECIAL_WEATHER_AI_FAILED"
     );
   }
 };

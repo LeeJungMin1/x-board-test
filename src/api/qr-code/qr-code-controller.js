@@ -1,63 +1,71 @@
 import * as QRService from "./qr-code-service.js";
+import { AppError } from "../../utils/common-utils/error-handler.js";
 
 export const getAllQRView = async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const result = await QRService.getAllQRViewList(page, limit);
-    res.json(result);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: error.message });
-  }
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const result = await QRService.getAllQRViewList(page, limit);
+  res.json(result);
 };
 
 export const findDevicesByQRData = async (req, res) => {
-  try {
-    const { data } = req.query;
-    if (!data)
-      return res.status(400).json({ error: "QR 데이터가 필요합니다." });
-    const result = await QRService.findDevicesByQRData(data);
-    if (result.error) return res.status(404).json({ error: result.error });
-    res.json({ devices: result });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
+  const { data } = req.query;
+
+  if (!data) {
+    throw new AppError("QR 데이터가 필요합니다.", 400, "QR_DATA_REQUIRED");
   }
+
+  const result = await QRService.findDevicesByQRData(data);
+
+  if (result?.error) {
+    throw new AppError(result.error, 404, "QR_DATA_NOT_FOUND", { data });
+  }
+
+  res.json({ devices: result });
 };
 
 export const updateDevicesByQRData = async (req, res) => {
-  try {
-    const { data, devices } = req.body;
-    if (!data || !devices)
-      return res.status(400).json({ error: "data와 devices가 필요합니다." });
-    const result = await QRService.updateDevicesByQRData(data, devices);
-    res.json(result);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
+  const { data, devices } = req.body;
+
+  if (!data || !devices) {
+    throw new AppError(
+      "data와 devices가 필요합니다.",
+      400,
+      "QR_UPDATE_INPUT_INVALID",
+      { data, devices }
+    );
   }
+
+  const result = await QRService.updateDevicesByQRData(data, devices);
+  res.json(result);
 };
 
 export const createQRCodeEntry = async (req, res) => {
-  try {
-    const { data } = req.body;
-    const result = await QRService.createQRCodeEntry(data);
-    res.json(result);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
+  const { data } = req.body;
+
+  if (!data) {
+    throw new AppError(
+      "data 값이 필요합니다.",
+      400,
+      "QR_CREATE_INPUT_REQUIRED"
+    );
   }
+
+  const result = await QRService.createQRCodeEntry(data);
+  res.json(result);
 };
 
 export const deleteQRCodeByData = async (req, res) => {
-  try {
-    const { data } = req.params;
+  const { data } = req.params;
 
-    const result = await QRService.deleteQRCodeByData(data);
-    res.json({ success: true });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: error.message });
+  if (!data) {
+    throw new AppError(
+      "QR 데이터가 필요합니다.",
+      400,
+      "QR_DELETE_INPUT_REQUIRED"
+    );
   }
+
+  await QRService.deleteQRCodeByData(data);
+  res.json({ success: true });
 };

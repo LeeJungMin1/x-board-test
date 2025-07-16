@@ -9,6 +9,7 @@ import {
   getCurrentDateTimeForAPI,
   getCurrentDateTime,
 } from "../../../utils/weather-ai/date-utils.js";
+import { AppError } from "../../../utils/common-utils/error-handler.js";
 
 const CurrentDate = getCurrentDateTime(); //20250103
 let previousReport = null;
@@ -38,7 +39,11 @@ export const getShortTermForecastAPI = async () => {
 
     return processedData;
   } catch (error) {
-    throw new Error(`단기예보 정보 요청에 실패했습니다 : ${error.message}`);
+    throw new AppError(
+      `단기예보 정보 요청 실패: ${error.message}`,
+      500,
+      "GET_SHORT_TERM_FORECAST_FAILED"
+    );
   }
 };
 
@@ -66,7 +71,7 @@ export const getSpecialWeatherReportAPI = async (
         Accept: "application/json",
       },
     });
-    console.log("response.data => ", response.data);
+
     const resultMsg = response.data.response.header.resultMsg;
     let rawData = "NO_DATA";
 
@@ -90,6 +95,10 @@ export const getSpecialWeatherReportAPI = async (
 
     return { data: rawData };
   } catch (error) {
-    throw new Error(`기상특보 정보 요청에 실패했습니다 : ${error.message}`);
+    throw new AppError(
+      `기상특보 정보 요청 실패: ${error.message}`,
+      500,
+      "GET_SPECIAL_WEATHER_FAILED"
+    );
   }
 };

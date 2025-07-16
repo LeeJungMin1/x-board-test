@@ -1,22 +1,27 @@
 import * as authService from "./auth-service.js";
 import { NODE_ENV } from "../../config/config.js";
 import { generateTokens, verifyToken } from "../../utils/token-utils.js";
+import { AppError } from "../../utils/common-utils/error-handler.js";
 
 export const postLogin = async (req, res) => {
   const { uid } = req.body;
 
-  if (!uid) return res.status(400).json({ error: "uid는 필수입니다." });
+  if (!uid) {
+    throw new AppError("uid는 필수입니다.", 400, "UID_REQUIRED");
+  }
 
   const user = await authService.findUserByUid(uid);
 
-  if (!user) return res.status(404).json({ error: "존재하지 않는 uid" });
+  if (!user) {
+    throw new AppError("존재하지 않는 uid", 404, "USER_NOT_FOUND", { uid });
+  }
 
   const { accessToken, refreshToken } = generateTokens(user.uid, user.is_admin);
 
   const isWeb = req.headers["user-agent"]?.includes("Mozilla");
+  const isProduction = NODE_ENV === "production";
 
   if (isWeb) {
-    const isProduction = NODE_ENV === "production";
     // 🌐 웹: Refresh Token을 HttpOnly 쿠키로 저장
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -31,22 +36,17 @@ export const postLogin = async (req, res) => {
   }
 };
 
-export const postRefreshToken = (req, res) => {
+export const postRefreshToken = async (req, res) => {
   const token = req.cookies?.refreshToken || req.body?.refreshToken;
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ message: "refresh token이 존재하지 않습니다." });
+    throw new AppError(
+      "refresh token이 존재하지 않습니다.",
+      401,
+      "REFRESH_TOKEN_REQUIRED"
+    );
   }
-
-  try {
-    const decoded = verifyToken(token);
-    const { accessToken } = generateTokens(decoded.userId);
-    return res.json({ accessToken });
-  } catch {
-    return res
-      .status(403)
-      .json({ message: "허용되지 않는 refresh token 입니다." });
-  }
+  const decoded = verifyToken(token);
+  const { accessToken } = generateTokens(decoded.userId);
+  return res.json({ accessToken });
 };
