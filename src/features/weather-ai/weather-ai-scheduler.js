@@ -2,7 +2,7 @@ import {
   CreateWeatherAIContent,
   CreateSpecialWeatherAlertAIContent,
 } from "../weather-ai/services/weatherAI-service.js";
-import logger from "../../utils/logger.js";
+import logger from "../../utils/common-utils/logger.js";
 import {
   handleError,
   AppError,

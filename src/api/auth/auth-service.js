@@ -1,4 +1,3 @@
-import { db } from "../../config/db.js";
 import * as authModel from "./auth-model.js";
 import { AppError } from "../../utils/common-utils/error-handler.js";
 

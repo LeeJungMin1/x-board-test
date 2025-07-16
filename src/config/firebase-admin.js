@@ -1,4 +1,5 @@
 import admin from "firebase-admin";
+import logger from "../utils/common-utils/logger.js";
 import {
   FIREBASE_TYPE,
   FIREBASE_PROJECT_ID,
@@ -31,9 +32,13 @@ try {
     }),
   });
 
-  console.log("✅ Firebase Admin SDK initialized successfully");
+  logger.info("✅ Firebase Admin SDK initialized successfully");
 } catch (error) {
-  console.error("❌ Firebase Admin SDK initialization failed:", error.message);
+  logger.error("❌ Firebase Admin SDK initialization failed", {
+    message: error.message,
+    stack: error.stack,
+  });
+  process.exit(1); // 치명적이므로 앱 종료
 }
 
 export default admin;

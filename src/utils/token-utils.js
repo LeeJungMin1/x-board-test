@@ -10,7 +10,7 @@ import { AppError } from "./common-utils/error-handler.js";
  */
 export const generateTokens = (userId, is_admin) => {
   const accessToken = jwt.sign({ userId, is_admin }, JWT_SECRET, {
-    expiresIn: "15m",
+    expiresIn: "30m",
   });
   const refreshToken = jwt.sign({ userId, is_admin }, JWT_SECRET, {
     expiresIn: "7d",
